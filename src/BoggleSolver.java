@@ -1,6 +1,5 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.TrieSET;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,6 +7,7 @@ import java.util.Set;
 public class BoggleSolver {
 
     private final TrieSET dictionary = new TrieSET();
+    private final int[] SCORES = {0, 0, 0, 1, 1, 2, 3, 5, 11};
 
     public BoggleSolver(String[] dictionary) {
         if (dictionary == null) {
@@ -32,7 +32,7 @@ public class BoggleSolver {
     }
 
     private void visit(BoggleBoard board, int row, int col, boolean[][] marked, String prefix, Set<String> words) {
-        if (row < 0 || col < 0 || row >= board.cols() || col >= board.rows()) {
+        if (row < 0 || col < 0 || row >= board.rows() || col >= board.cols()) {
             return;
         }
         if (marked[row][col]) {
@@ -43,7 +43,7 @@ public class BoggleSolver {
         if (letter == 'Q') {
             word += 'U';
         }
-        if (!hasWordsWithPrefix(word)) {
+        if (!dictionary.hasPrefix(word)) {
             return;
         }
         if (word.length() >= 3 && dictionary.contains(word)) {
@@ -63,33 +63,10 @@ public class BoggleSolver {
 
     public int scoreOf(String word) {
         if (dictionary.contains(word)) {
-            switch (word.length()) {
-                case 0:
-                case 1:
-                case 2:
-                    return 0;
-                case 3:
-                case 4:
-                    return 1;
-                case 5:
-                    return 2;
-                case 6:
-                    return 3;
-                case 7:
-                    return 5;
-                default:
-                    return 11;
-            }
+            return SCORES[Math.min(word.length(), 8)];
         } else {
             return 0;
         }
-    }
-
-    private boolean hasWordsWithPrefix(String prefix) {
-        for (String prefixWord : dictionary.keysWithPrefix(prefix)) {
-            return true;
-        }
-        return false;
     }
 
     public static void main(String[] args) {
